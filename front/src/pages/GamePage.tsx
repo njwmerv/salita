@@ -1,7 +1,6 @@
 import {ChangeEvent, useEffect, useState} from 'react';
 import Board from '../components/Board.tsx';
 import Keyboard from '../components/Keyboard.tsx';
-import {States, Word} from '../utility/types.ts';
 import {ARCHIVE_PAGE_ROUTE} from '../utility/routes.ts';
 import {useNavigate, useParams} from 'react-router-dom';
 
@@ -12,20 +11,12 @@ export default function GamePage(){
     
     const [word, setWord] = useState('');
     const [length, setLength] = useState(7);
-    
-    const aWord: Word = {
-        word: "lakasan",
-        length: length,
-        correctness: [States.CORRECT, States.PRESENT, States.WRONG, States.PRESENT, States.WRONG]
-    };
-    
-    const [guesses, setGuesses] = useState([aWord]);
+    const [guesses, setGuesses] = useState([]);
     
     // Methods/Handlers
-    function handleGuess(id: string | number | undefined, word: string): void {
-        console.log("MARI", id, word);
+    function handleGuess(): void {
+        setWord('');
     }
-    handleGuess(id, "");
     
     // Effects
     useEffect(() => {
@@ -37,12 +28,13 @@ export default function GamePage(){
     
     // Render
     return (
-        <div className="h-auto bg-black">
+        <div className="h-auto bg-black pt-2 pb-2">
             <Board word={word} length={length} guesses={guesses} />
             
-            <Keyboard word={word} setWord={setWord} />
+            <Keyboard word={word} setWord={setWord} submit={() => handleGuess()} />
             
             <input id="hidden-input"
+                   type="text"
                    value={word}
                    autoFocus
                    className="opacity-0 absolute left-0 top-0"
@@ -53,6 +45,11 @@ export default function GamePage(){
                    }}
                    onBlur={(event: FocusEvent<HTMLInputElement, Element>) => {
                        event.target.focus();
+                   }}
+                   onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                       if(event.key === 'Enter'){
+                           handleGuess();
+                       }
                    }}
             />
         </div>

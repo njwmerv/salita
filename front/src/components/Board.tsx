@@ -1,6 +1,6 @@
 import {MAX_GUESSES} from '../utility/constants.ts';
 import {States, Word} from '../utility/types.ts';
-import {isNullOrUndefined} from "../utility/helpers.ts";
+import {isNullOrUndefined} from '../utility/helpers.ts';
 
 interface BoardProps{
     word: string,
@@ -61,8 +61,7 @@ function BoardRow({key, word, guess, length}: BoardRowProps){
             
             {!word && !guess &&
                 Array.from({length: length}).map((_, index: number) =>
-                    <Tile key={`${key}-${index}`}
-                    />
+                    <Tile key={`${key}-${index}`} />
                 )
             }
         </div>
@@ -76,9 +75,6 @@ interface TileProps{
 }
 
 function Tile({key, letter, correctness}: TileProps){
-    const containerClass: string = "flex flex-row items-center w-16 h-16"
-    const textClass: string = "m-auto text-xl text-white w-full text-center";
-    
     const tileColour = (): string => {
         switch(correctness){
             case States.WRONG:
@@ -92,18 +88,18 @@ function Tile({key, letter, correctness}: TileProps){
         }
     };
     
+    const textClass: string = "text-xl text-white w-16 h-16 text-center";
+    const containerClass: string = "flex flex-row items-center w-16 h-16" + tileColour();
+    
     // Render
     return (
         isNullOrUndefined(letter) && isNullOrUndefined(correctness) ?
-            <div key={key} className={`${containerClass} ${tileColour()}`}>
-                <p className={textClass}></p>
+            <div key={key} className={containerClass}>
+                <p className={textClass}> </p>
             </div>
             :
-            <div key={key} className={`${containerClass} ${tileColour()}`}>
-                <input className={textClass}
-                       value={letter?.toUpperCase()}
-                       disabled={isNullOrUndefined(correctness)}
-                />
+            <div key={key} className={containerClass}>
+                <p className={textClass}>{letter?.toUpperCase()}</p>
             </div>
     );
 }
