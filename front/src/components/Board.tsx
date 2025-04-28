@@ -78,28 +78,27 @@ function Tile({key, letter, correctness}: TileProps){
     const tileColour = (): string => {
         switch(correctness){
             case States.WRONG:
-                return "bg-gray-600";
+                return " bg-gray-600";
             case States.PRESENT:
-                return "bg-amber-300";
+                return " bg-amber-300";
             case States.CORRECT:
-                return "bg-green-600";
+                return " bg-green-600";
             default:
-                return "bg-black border-4 border-solid border-gray-600";
+                return " bg-black border-4 border-solid border-gray-600";
         }
     };
     
-    const textClass: string = "text-xl text-white w-16 h-16 text-center";
+    const textClass: string = "m-auto text-xl w-full text-center text-white";
     const containerClass: string = "flex flex-row items-center w-16 h-16" + tileColour();
     
     // Render
     return (
-        isNullOrUndefined(letter) && isNullOrUndefined(correctness) ?
-            <div key={key} className={containerClass}>
-                <p className={textClass}> </p>
-            </div>
-            :
-            <div key={key} className={containerClass}>
+        <div key={key} className={containerClass}>
+            {!isNullOrUndefined(letter) || !isNullOrUndefined(correctness) ?
                 <p className={textClass}>{letter?.toUpperCase()}</p>
-            </div>
+                :
+                null
+            }
+        </div>
     );
 }
