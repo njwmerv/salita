@@ -15,12 +15,27 @@ public class GameController{
     private GameService gameService;
 
     @GetMapping("/start")
-    public GameDTO startGame(@RequestParam int dayID, @RequestParam(required = false) String playerID){
-        if(playerID == null){
-            return gameService.startGame(dayID);
+    public GameDTO startGame(@RequestParam String dayID, @RequestParam(required = false) String playerID){
+        if(dayID == null) return null;
+
+        int intDayID;
+        if(dayID.equals("today")){
+            intDayID = gameService.getIDToday();
         }
         else{
-            return gameService.startGame(dayID, playerID);
+            try{
+                intDayID = Integer.parseInt(dayID);
+            }
+            catch(NumberFormatException e){
+                return null;
+            }
+        }
+
+        if(playerID == null){
+            return gameService.startGame(intDayID);
+        }
+        else{
+            return gameService.startGame(intDayID, playerID);
         }
     }
 
