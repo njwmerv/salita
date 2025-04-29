@@ -39,8 +39,8 @@ public class GameController{
         }
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "test successful!";
+    @GetMapping("/archive")
+    public int archiveLength(){
+        return gameService.getIDToday();
     }
 }

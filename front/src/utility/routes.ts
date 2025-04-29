@@ -7,6 +7,9 @@ export const ARCHIVE_PAGE_ROUTE: string = '/archive/';
 // Backend API Routes
 export const BACKEND_API_ROOT: string = "http://localhost:8080";
 export const GAME_MAPPING: string = BACKEND_API_ROOT + '/game';
+
 export const GAME_START_MAPPING: string = GAME_MAPPING + '/start';
 export const GAME_START_MAPPING_DAY_ID_PARAM: string = 'dayID';
 export const GAME_START_MAPPING_PLAYER_ID_PARAM: string = 'playerID';
+
+export const GAME_ARCHIVE_MAPPING: string = GAME_MAPPING + '/archive';

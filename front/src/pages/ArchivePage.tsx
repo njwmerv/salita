@@ -1,11 +1,32 @@
+import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {GAME_PAGE_LINK} from '../utility/routes.ts';
+import {GAME_ARCHIVE_MAPPING, GAME_PAGE_LINK} from '../utility/routes.ts';
 
 export default function ArchivePage(){
     // State Variables
-    const NUMBER_OF_PREVIOUS : number = 10;
+    const [previous, setPrevious] = useState(0);
     
     // Methods/Handlers
+    async function getNumberOfPrevious(){
+        try{
+            const response: Response = await fetch(GAME_ARCHIVE_MAPPING, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const prev: number = await response.json();
+            setPrevious(prev);
+        }
+        catch(error){
+            console.log("Failed to load archive data");
+        }
+    }
+    
+    // Effects
+    useEffect(() => {
+        getNumberOfPrevious();
+    }, []);
     
     // Render
     return (
@@ -17,8 +38,8 @@ export default function ArchivePage(){
             </Link>
             
             <div className="grid">
-                {Array.from({length: NUMBER_OF_PREVIOUS}).map((_, i : number) => {
-                    const index : number = NUMBER_OF_PREVIOUS - i;
+                {Array.from({length: previous}).map((_, i : number) => {
+                    const index : number = previous - i;
                     return (
                         <Link to={`${GAME_PAGE_LINK}${index}`} key={`archive-${index}`}>
                             <button>{index}</button>
