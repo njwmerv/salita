@@ -1,6 +1,7 @@
 import {ChangeEvent, useEffect, useState} from 'react';
 import Board from '../components/Board.tsx';
 import Keyboard from '../components/Keyboard.tsx';
+import {LETTERS} from '../utility/constants.ts';
 import {ARCHIVE_PAGE_ROUTE} from '../utility/routes.ts';
 import {useNavigate, useParams} from 'react-router-dom';
 
@@ -37,16 +38,25 @@ export default function GamePage(){
                    type="text"
                    value={word}
                    autoFocus
-                   className="opacity-0 absolute left-0 top-0"
+                   className="opacity-0 absolute right-0 top-0 w-0"
                    maxLength={length}
                    autoComplete="off"
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                       setWord(event.target.value);
+                       const value: string = event.target.value;
+                       
+                       if(value.length <= word.length){
+                           setWord(word.slice(0, -1));
+                           return;
+                       }
+                       
+                       const final: string = value.slice(-1);
+                       if(final === 'N') setWord(word + 'Ñ');
+                       else if(LETTERS.flat().includes(final.toUpperCase())) setWord(word + final.toUpperCase());
                    }}
-                   onBlur={(event: FocusEvent<HTMLInputElement, Element>) => {
+                   onBlur={(event) => {
                        event.target.focus();
                    }}
-                   onKeyDown={(event: KeyboardEvent<HTMLInputElement>) => {
+                   onKeyDown={(event) => {
                        if(event.key === 'Enter'){
                            handleGuess();
                        }
