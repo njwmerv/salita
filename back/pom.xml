@@ -8,11 +8,11 @@
 		<version>3.4.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>back</artifactId>
+	<groupId>com.njwmerv</groupId>
+	<artifactId>salita-back</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>back</name>
-	<description>A Wordle-like game for the Tagalog language</description>
+	<name>salita-back</name>
+	<description>Backend for a Tagalog version of Wordle</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -30,6 +30,10 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
