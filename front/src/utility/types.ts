@@ -1,7 +1,7 @@
 export enum States{
-    WRONG = 0,
-    PRESENT = 1,
-    CORRECT = 2,
+    WRONG = "WRONG",
+    PRESENT = "PRESENT",
+    CORRECT = "CORRECT",
 }
 
 export type Word = {

@@ -1,9 +1,10 @@
 import {ChangeEvent, useEffect, useState} from 'react';
 import Board from '../components/Board.tsx';
+import {States} from '../utility/types.ts';
 import Keyboard from '../components/Keyboard.tsx';
 import {LETTERS} from '../utility/constants.ts';
 import {useNavigate, useParams} from 'react-router-dom';
-import {ARCHIVE_PAGE_ROUTE, GAME_START_MAPPING, GAME_START_MAPPING_DAY_ID_PARAM} from '../utility/routes.ts';
+import {ARCHIVE_PAGE_ROUTE, GAME_START_MAPPING, DAY_ID_PARAM, GAME_GUESS_MAPPING, WORD_PARAM} from '../utility/routes.ts';
 
 export default function GamePage(){
     // State Variables
@@ -13,10 +14,12 @@ export default function GamePage(){
     const [word, setWord] = useState('');
     const [length, setLength] = useState(5);
     const [guesses, setGuesses] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
     
     // Methods/Handlers
     async function getGameData(): Promise<object> {
-        const url: string = GAME_START_MAPPING + `?${GAME_START_MAPPING_DAY_ID_PARAM}=${id}`;
+        const url: string = GAME_START_MAPPING +
+            `?${DAY_ID_PARAM}=${id}`;
         try{
             const response: Response = await fetch(url, {
                 method: "GET",
@@ -36,7 +39,39 @@ export default function GamePage(){
         
     }
     
-    function handleGuess(): void {
+    async function handleGuess(): Promise<object> {
+        const url: string = GAME_GUESS_MAPPING +
+            `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}`;
+        try{
+            const response: Response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if(!response.ok){
+                throw new Error();
+            }
+            const json: object = await response.json();
+            if(json.valid){
+                setWord('');
+                setGuesses([...guesses, json]);
+                setIsOpen(didWin(json.correctness));
+            }
+            else{
+                console.log("Word not found in word list.");
+            }
+        }
+        catch(error){
+            console.log("Failed to submit guess");
+        }
+    }
+    
+    function didWin(correctness: States[]): boolean {
+        for(const state of correctness){
+            if(state !== States.CORRECT) return false;
+        }
+        return true;
     }
     
     // Effects
@@ -80,7 +115,7 @@ export default function GamePage(){
                        event.target.focus();
                    }}
                    onKeyDown={(event) => {
-                       if(event.key === 'Enter'){
+                       if(event.key === 'Enter' && word.length === length){
                            handleGuess();
                        }
                    }}

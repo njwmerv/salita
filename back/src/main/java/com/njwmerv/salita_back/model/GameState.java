@@ -13,7 +13,7 @@ public class GameState{
     private String playerID;
     final private int length;
     final private String answer;
-    private List<String> previousGuesses;
+    private List<Word> previousGuesses;
 
     public GameState(String id, int dayID, String playerID, int length, String answer){
         super();
@@ -56,15 +56,15 @@ public class GameState{
         return answer;
     }
 
-    public List<String> getPreviousGuesses() {
+    public List<Word> getPreviousGuesses() {
         return previousGuesses;
     }
 
-    public void setPreviousGuesses(List<String> previousGuesses) {
+    public void setPreviousGuesses(List<Word> previousGuesses) {
         this.previousGuesses = previousGuesses;
     }
 
-    public void addGuess(String guess){
+    public void addGuess(Word guess){
         previousGuesses.add(guess);
     }
 }

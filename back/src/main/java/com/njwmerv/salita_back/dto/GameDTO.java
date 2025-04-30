@@ -1,12 +1,14 @@
 package com.njwmerv.salita_back.dto;
 
+import com.njwmerv.salita_back.model.Word;
+
 import java.util.List;
 
 public class GameDTO{
     final private int length;
-    final private List<String> previousGuesses;
+    final private List<Word> previousGuesses;
 
-    public GameDTO(int length, List<String> previousGuesses) {
+    public GameDTO(int length, List<Word> previousGuesses) {
         this.length = length;
         this.previousGuesses = previousGuesses;
     }
@@ -15,7 +17,7 @@ public class GameDTO{
         return length;
     }
 
-    public List<String> getPreviousGuesses() {
+    public List<Word> getPreviousGuesses() {
         return previousGuesses;
     }
 }

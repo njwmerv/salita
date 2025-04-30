@@ -1,6 +1,7 @@
 package com.njwmerv.salita_back.controller;
 
 import com.njwmerv.salita_back.dto.GameDTO;
+import com.njwmerv.salita_back.dto.WordDTO;
 import com.njwmerv.salita_back.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,19 +19,7 @@ public class GameController{
     public GameDTO startGame(@RequestParam String dayID, @RequestParam(required = false) String playerID){
         if(dayID == null) return null;
 
-        int intDayID;
-        if(dayID.equals("today")){
-            intDayID = gameService.getIDToday();
-        }
-        else{
-            try{
-                intDayID = Integer.parseInt(dayID);
-            }
-            catch(NumberFormatException e){
-                return null;
-            }
-        }
-
+        final int intDayID = gameService.readDayIDParam(dayID);
         if(playerID == null){
             return gameService.startGame(intDayID);
         }
@@ -42,5 +31,18 @@ public class GameController{
     @GetMapping("/archive")
     public int archiveLength(){
         return gameService.getIDToday();
+    }
+
+    @GetMapping("/guess")
+    public WordDTO guessWord(@RequestParam String dayID, @RequestParam String word, @RequestParam(required = false) String playerID){
+        if(dayID == null || word == null) return null;
+
+        final int intDayID = gameService.readDayIDParam(dayID);
+        if(playerID == null){
+            return gameService.validateWord(intDayID, word);
+        }
+        else{
+            return gameService.validateWord(intDayID, word, playerID);
+        }
     }
 }
