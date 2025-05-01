@@ -1,9 +1,9 @@
 import {ChangeEvent, useEffect, useState} from 'react';
 import Board from '../components/Board.tsx';
-import {States} from '../utility/types.ts';
 import Keyboard from '../components/Keyboard.tsx';
 import {LETTERS} from '../utility/constants.ts';
 import {useNavigate, useParams} from 'react-router-dom';
+import {GameDTO, States, WordDTO} from '../utility/types.ts';
 import {ARCHIVE_PAGE_ROUTE, GAME_START_MAPPING, DAY_ID_PARAM, GAME_GUESS_MAPPING, WORD_PARAM} from '../utility/routes.ts';
 
 export default function GamePage(){
@@ -17,7 +17,7 @@ export default function GamePage(){
     const [isOpen, setIsOpen] = useState(false);
     
     // Methods/Handlers
-    async function getGameData(): Promise<object> {
+    async function getGameData(): Promise<GameDTO> {
         const url: string = GAME_START_MAPPING +
             `?${DAY_ID_PARAM}=${id}`;
         try{
@@ -39,7 +39,7 @@ export default function GamePage(){
         
     }
     
-    async function handleGuess(): Promise<object> {
+    async function handleGuess(): Promise<WordDTO> {
         const url: string = GAME_GUESS_MAPPING +
             `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}`;
         try{
@@ -52,7 +52,7 @@ export default function GamePage(){
             if(!response.ok){
                 throw new Error();
             }
-            const json: object = await response.json();
+            const json: WordDTO = await response.json();
             if(json.valid){
                 setWord('');
                 setGuesses([...guesses, json]);
@@ -78,7 +78,7 @@ export default function GamePage(){
     useEffect(() => {
         if(!id) navigate(ARCHIVE_PAGE_ROUTE);
         else{
-            getGameData().then((value) => {
+            getGameData().then((value: GameDTO) => {
                 setLength(value.length);
                 if(value.previousGuesses) setGuesses(value.previousGuesses);
             });
