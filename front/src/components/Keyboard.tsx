@@ -1,15 +1,17 @@
-import * as React from 'react';
+import {Dispatch, SetStateAction} from 'react';
 import {LETTERS} from '../utility/constants.ts';
 
 interface KeyboardProps{
     word: string,
-    setWord: React.Dispatch<React.SetStateAction<string>>,
+    setWord: Dispatch<SetStateAction<string>>,
+    disabled: boolean,
     submit: () => void
 }
 
-export default function Keyboard({word, setWord, submit}: KeyboardProps){
+export default function Keyboard({word, setWord, disabled, submit}: KeyboardProps){
     // Methods/Handlers
     const handleOnPress = (key: string) => {
+        if(disabled) return;
         if(key !== 'DEL' && key !== 'ENTER'){
             return () => {
                 const newWord = word + key;
