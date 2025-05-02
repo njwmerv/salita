@@ -30,7 +30,7 @@ public class GameController{
 
     @GetMapping("/archive")
     public int archiveLength(){
-        return gameService.getIDToday();
+        return gameService.getIDToday() - 1;
     }
 
     @GetMapping("/guess")

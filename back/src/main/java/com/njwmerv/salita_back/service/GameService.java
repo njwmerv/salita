@@ -38,7 +38,7 @@ public class GameService{
     public int getIDToday(){
         final LocalDate DAY_ONE = LocalDate.of(2025, 4, 28);
         final LocalDate today = LocalDate.now();
-        return (int) ChronoUnit.DAYS.between(DAY_ONE, today) - 1; // No way I reach the int limit
+        return (int) ChronoUnit.DAYS.between(DAY_ONE, today); // No way I reach the int limit
     }
 
     public GameDTO startGame(int dayID){
