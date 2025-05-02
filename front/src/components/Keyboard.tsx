@@ -29,7 +29,7 @@ export default function Keyboard({word, setWord, submit}: KeyboardProps){
     
     // Render
     return (
-        <div className="flex flex-col gap-2 items-center w-md m-auto pb-4">
+        <div className="hidden sm:flex flex-col gap-2 items-center w-md sm:m-auto sm:pb-4">
             {LETTERS.map((row: string[], index: number) => {
                 return (
                     <div key={`keyboard-${index}`} className="flex flex-row gap-2 items-center">

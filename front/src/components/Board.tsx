@@ -11,7 +11,7 @@ interface BoardProps{
 export default function Board({word, length, guesses}: BoardProps){
     // Render
     return (
-        <div className="flex flex-col gap-1 items-center w-md m-auto mt-4 mb-4">
+        <div className="flex flex-col gap-1 items-center sm:w-md sm:m-auto mt-4 sm:mb-4">
             {guesses.map((_, index: number) => {
                 return (
                     <BoardRow key={`board-${index}`} word={guesses[index]} length={length} />
@@ -78,18 +78,18 @@ function Tile({key, letter, correctness}: TileProps){
     const tileColour = (): string => {
         switch(correctness){
             case States.WRONG:
-                return " bg-gray-600";
+                return "bg-gray-600";
             case States.PRESENT:
-                return " bg-amber-300";
+                return "bg-amber-300";
             case States.CORRECT:
-                return " bg-green-600";
+                return "bg-green-600";
             default:
-                return " bg-black border-4 border-solid border-gray-600";
+                return "bg-black border-4 border-solid border-gray-600";
         }
     };
     
     const textClass: string = "m-auto text-xl w-full text-center text-white";
-    const containerClass: string = "flex flex-row items-center w-16 h-16" + tileColour();
+    const containerClass: string = `flex flex-row items-center sm:size-18 size-13 ${tileColour()}`;
     
     // Render
     return (

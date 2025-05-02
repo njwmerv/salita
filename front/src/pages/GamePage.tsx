@@ -12,7 +12,7 @@ export default function GamePage(){
     const navigate = useNavigate();
     
     const [word, setWord] = useState('');
-    const [length, setLength] = useState(5);
+    const [length, setLength] = useState(7);
     const [guesses, setGuesses] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     
@@ -87,7 +87,7 @@ export default function GamePage(){
     
     // Render
     return (
-        <div className="h-auto bg-black pt-2 pb-2">
+        <div className="w-full min-w-fit h-[calc(100dvh-theme(spacing.16))] sm:pt-2 sm:pb-2 flex flex-col align-middle items-center-safe bg-black">
             <Board word={word} length={length} guesses={guesses} />
             
             <Keyboard word={word} setWord={setWord} submit={() => handleGuess()} />
@@ -96,7 +96,7 @@ export default function GamePage(){
                    type="text"
                    value={word}
                    autoFocus
-                   className="opacity-0 absolute right-0 top-0 w-0"
+                   className="opacity-0 absolute left-0 bottom-0 w-0"
                    maxLength={length}
                    autoComplete="off"
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
