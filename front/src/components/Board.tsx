@@ -14,17 +14,18 @@ export default function Board({word, length, guesses}: BoardProps){
         <div className="flex flex-col gap-1 items-center sm:w-md sm:m-auto mt-4 sm:mb-4">
             {guesses.map((_, index: number) => {
                 return (
-                    <BoardRow key={`board-${index}`} word={guesses[index]} length={length} />
+                    <BoardRow key={`board-${index}`} rowIndex={index} word={guesses[index]} length={length} />
                 );
             })}
             
             {guesses.length < MAX_GUESSES &&
-                <BoardRow key={`board-${guesses.length}`} guess={word} length={length} />
+                <BoardRow key={`board-${guesses.length}`} rowIndex={guesses.length} guess={word} length={length} />
             }
             
             {Array.from({length: MAX_GUESSES - guesses.length - 1}).map((_, index: number) => {
+                const realIndex: number = guesses.length + index + 1;
                 return (
-                    <BoardRow key={`board-${guesses.length + index + 1}`} length={length} />
+                    <BoardRow key={`board-${realIndex}`} rowIndex={realIndex} length={length} />
                 );
             })}
         </div>
@@ -35,16 +36,17 @@ interface BoardRowProps{
     key: string,
     word?: Word,
     guess?: string,
-    length: number
+    length: number,
+    rowIndex: number
 }
 
-function BoardRow({key, word, guess, length}: BoardRowProps){
+function BoardRow({keyProp, word, guess, length, rowIndex}: BoardRowProps){
     // Render
     return (
-        <div key={key} className="flex flex-row gap-1 w-full justify-center">
+        <div key={keyProp} className="flex flex-row gap-1 w-full justify-center">
             {word &&
                 Array.from({length: length}).map((_, index: number) =>
-                    <Tile key={`${key}-${index}`}
+                    <Tile key={`board-${rowIndex}-${index}`}
                           letter={word.word[index]}
                           correctness={word.correctness[index]}
                     />
@@ -53,7 +55,7 @@ function BoardRow({key, word, guess, length}: BoardRowProps){
             
             {guess &&
                 Array.from({length: length}).map((_, index: number) =>
-                    <Tile key={`${key}-${index}`}
+                    <Tile key={`board-${rowIndex}-${index}`}
                           letter={guess[index]}
                     />
                 )
@@ -61,7 +63,7 @@ function BoardRow({key, word, guess, length}: BoardRowProps){
             
             {!word && !guess &&
                 Array.from({length: length}).map((_, index: number) =>
-                    <Tile key={`${key}-${index}`} />
+                    <Tile key={`board-${rowIndex}-${index}`} />
                 )
             }
         </div>
@@ -74,7 +76,7 @@ interface TileProps{
     correctness?: States
 }
 
-function Tile({key, letter, correctness}: TileProps){
+function Tile({letter, correctness}: TileProps){
     const tileColour = (): string => {
         switch(correctness){
             case States.WRONG:
@@ -93,7 +95,7 @@ function Tile({key, letter, correctness}: TileProps){
     
     // Render
     return (
-        <div key={key} className={containerClass}>
+        <div className={containerClass}>
             {!isNullOrUndefined(letter) || !isNullOrUndefined(correctness) ?
                 <p className={textClass}>{letter?.toUpperCase()}</p>
                 :
