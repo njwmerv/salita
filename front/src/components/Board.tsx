@@ -40,10 +40,10 @@ interface BoardRowProps{
     rowIndex: number
 }
 
-function BoardRow({keyProp, word, guess, length, rowIndex}: BoardRowProps){
+function BoardRow({key, word, guess, length, rowIndex}: BoardRowProps){
     // Render
     return (
-        <div key={keyProp} className="flex flex-row gap-1 w-full justify-center">
+        <div key={key} className="flex flex-row gap-1 w-full justify-center">
             {word &&
                 Array.from({length: length}).map((_, index: number) =>
                     <Tile key={`board-${rowIndex}-${index}`}

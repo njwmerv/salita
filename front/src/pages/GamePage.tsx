@@ -16,11 +16,11 @@ export default function GamePage(){
     const {id} = useParams();
     const navigate = useNavigate();
     
-    const [won, setWon] = useState(false);
-    const [word, setWord] = useState('');
-    const [length, setLength] = useState(7);
-    const [guesses, setGuesses] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
+    const [won, setWon] = useState<boolean>(false);
+    const [word, setWord] = useState<string>('');
+    const [length, setLength] = useState<number>(7);
+    const [guesses, setGuesses] = useState<Word[]>([]);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
     
     const disabled: boolean = guesses.length > 0 ?
         guesses.length >= MAX_GUESSES || didWin(guesses[guesses.length - 1].correctness) : false;
@@ -64,10 +64,11 @@ export default function GamePage(){
             pending: "Checking answer...",
             success: "Answer processed.",
             error: "An error has occurred"
-        }).then((response) => {
+        }).then((response: WordDTO) => {
             if(response.valid){
-                const newGuesses: Word[] = [...guesses, response];
-                const willWin: boolean = didWin(response.correctness);
+                const newWord: Word = {word: response.word, length: response.word.length, correctness: response.correctness};
+                const newGuesses: Word[] = [...guesses, newWord];
+                const willWin: boolean = didWin(newWord.correctness);
                 setWon(willWin);
                 setIsOpen(willWin || newGuesses.length >= MAX_GUESSES);
                 setGuesses(newGuesses);
