@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
+import {toast} from 'react-toastify';
 import {GAME_ARCHIVE_MAPPING, GAME_PAGE_LINK} from '../utility/routes.ts';
 
 export default function ArchivePage(){
@@ -8,24 +9,28 @@ export default function ArchivePage(){
     
     // Methods/Handlers
     async function getNumberOfPrevious(){
-        try{
-            const response: Response = await fetch(GAME_ARCHIVE_MAPPING, {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const prev: number = await response.json();
-            setPrevious(prev);
-        }
-        catch(error){
-            console.log("Failed to load archive data");
-        }
+        const response: Response = await fetch(GAME_ARCHIVE_MAPPING, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.json();
     }
     
     // Effects
     useEffect(() => {
-        getNumberOfPrevious();
+        toast.promise(getNumberOfPrevious(), {
+            pending: "Getting archived games...",
+            success: "Archive loaded.",
+            error:{
+                render(){
+                    return "Failed to load archive data"
+                }
+            }
+        }).then((response) => {
+            setPrevious(response);
+        })
     }, []);
     
     // Render

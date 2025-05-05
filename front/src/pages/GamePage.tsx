@@ -1,7 +1,8 @@
 import {ChangeEvent, useEffect, useState} from 'react';
 import Board from '../components/Board.tsx';
 import Modal from '../components/Modal.tsx';
-import words from '../tagalog_words.json';
+import words from './../tagalog_words.json';
+import {toast} from 'react-toastify';
 import Keyboard from '../components/Keyboard.tsx';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import {LETTERS, MAX_GUESSES} from '../utility/constants.ts';
@@ -26,60 +27,55 @@ export default function GamePage(){
     
     // Methods/Handlers
     async function getGameData(): Promise<GameDTO> {
-        const url: string = GAME_START_MAPPING +
-            `?${DAY_ID_PARAM}=${id}`;
-        try{
-            const response: Response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if(!response.ok){
-                navigate(ARCHIVE_PAGE_ROUTE);
+        const url: string = GAME_START_MAPPING + `?${DAY_ID_PARAM}=${id}`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
             }
-            return await response.json();
-        }
-        catch(error){
-            console.log("Failed to load game data, redirecting to Archive Page");
-            navigate(ARCHIVE_PAGE_ROUTE);
-        }
+        });
         
+        return response.json();
     }
     
-    async function handleGuess(): Promise<WordDTO> {
+    async function sendGuess(): Promise<WordDTO> {
+        const url: string = GAME_GUESS_MAPPING + `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}`;
+        const response: Response = await fetch(url, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.json();
+    }
+    
+    function handleGuess(){
         if(!words.includes(word.toUpperCase())) {
+            toast.warn("This is not a valid word.");
             return;
         }
-        const url: string = GAME_GUESS_MAPPING +
-            `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}`;
-        try{
-            const response: Response = await fetch(url, {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if(!response.ok){
-                throw new Error();
+        for(const guess of guesses){
+            if(guess.word.toUpperCase() === word.toUpperCase()){
+                toast.warn("You already guessed this word");
+                return;
             }
-            const json: WordDTO = await response.json();
-            if(json.valid){
+        }
+        toast.promise(sendGuess(), {
+            pending: "Checking answer...",
+            error: "An error has occurred"
+        }).then((response) => {
+            if(response.valid){
                 setWord('');
-                const newGuesses: Word[] = [...guesses, json];
-                const willWin: boolean = didWin(json.correctness);
+                const newGuesses: Word[] = [...guesses, response];
+                const willWin: boolean = didWin(response.correctness);
                 setWon(willWin);
                 setIsOpen(willWin || newGuesses.length >= MAX_GUESSES);
                 setGuesses(newGuesses);
             }
             else{
-                console.log("Word not found in word list.");
+                toast.warn("This is not a valid word.");
             }
-            return json;
-        }
-        catch(error){
-            console.log("Failed to submit guess");
-        }
+        });
     }
     
     function didWin(correctness: States[]): boolean {
@@ -134,7 +130,16 @@ export default function GamePage(){
         if(!id) navigate(ARCHIVE_PAGE_ROUTE);
         else{
             setWord('');
-            getGameData().then((value: GameDTO) => {
+            toast.promise(getGameData(), {
+                pending: "Accessing game data. Please wait...",
+                success: "Game is now ready. Have fun!",
+                error:{
+                    render() {
+                        navigate(ARCHIVE_PAGE_ROUTE);
+                        return "Failed to load game data, redirecting to Archive Page";
+                    },
+                }
+            }).then((value: GameDTO) => {
                 setLength(value.length);
                 if(value.previousGuesses) setGuesses(value.previousGuesses);
                 else setGuesses([]);
