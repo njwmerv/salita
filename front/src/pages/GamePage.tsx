@@ -82,7 +82,7 @@ export default function GamePage(){
     }
     
     function didWin(correctness: States[]): boolean {
-        for(const state: States of correctness){
+        for(const state of correctness){
             if(state !== States.CORRECT) return false;
         }
         return true;
@@ -221,7 +221,7 @@ export default function GamePage(){
                     </a>
                     
                     <div>
-                        {guesses.map((value: Word, index: number) => {
+                        {guesses.map((_: Word, index: number) => {
                             return <p key={`result-${index}`}>{renderGuesses(index)}</p>;
                         })}
                     </div>
