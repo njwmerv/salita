@@ -67,7 +67,6 @@ public class GameService{
     }
 
     public WordDTO validateWord(int dayID, String guess){
-        // TODO: Add check for guess being a valid word
         final Game game = gameRepository.findGameByID(dayID);
         if(game == null) return null;
         final int length = game.getLength();
@@ -77,7 +76,6 @@ public class GameService{
     }
 
     public WordDTO validateWord(int dayID, String guess, String playerID){
-        // TODO: Add check for guess being a valid word
         GameState state = gameStateRepository.findGameStateByDayAndPlayerID(dayID, playerID);
         if(state == null){ // If can't find this game state, then just treat as if logged out
             return validateWord(dayID, guess);

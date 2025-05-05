@@ -1,6 +1,7 @@
 import {ChangeEvent, useEffect, useState} from 'react';
 import Board from '../components/Board.tsx';
 import Modal from '../components/Modal.tsx';
+import words from '../tagalog_words.json';
 import Keyboard from '../components/Keyboard.tsx';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import {LETTERS, MAX_GUESSES} from '../utility/constants.ts';
@@ -47,6 +48,9 @@ export default function GamePage(){
     }
     
     async function handleGuess(): Promise<WordDTO> {
+        if(!words.includes(word.toUpperCase())) {
+            return;
+        }
         const url: string = GAME_GUESS_MAPPING +
             `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}`;
         try{
@@ -104,7 +108,7 @@ export default function GamePage(){
     }
     
     function guessesToString(): string {
-        let result: string = "";
+        let result: string = "Salita Results\n";
         for(const guess of guesses){
             for(const state of guess.correctness){
                 switch(state){
@@ -121,6 +125,7 @@ export default function GamePage(){
             }
             result += "\n";
         }
+        result += `${guesses.length}/${MAX_GUESSES} attempts!`;
         return result;
     }
     
