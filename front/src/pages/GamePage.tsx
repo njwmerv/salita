@@ -4,8 +4,8 @@ import Modal from '../components/Modal.tsx';
 import words from './../tagalog_words.json';
 import {toast} from 'react-toastify';
 import Keyboard from '../components/Keyboard.tsx';
+import {MAX_GUESSES} from '../utility/constants.ts';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import {LETTERS, MAX_GUESSES} from '../utility/constants.ts';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import {useNavigate, useParams} from 'react-router-dom';
 import {GameDTO, States, Word, WordDTO} from '../utility/types.ts';
@@ -62,6 +62,7 @@ export default function GamePage(){
         }
         toast.promise(sendGuess(), {
             pending: "Checking answer...",
+            success: "Answer processed.",
             error: "An error has occurred"
         }).then((response) => {
             if(response.valid){
@@ -191,16 +192,7 @@ export default function GamePage(){
                    autoComplete="off"
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        if(disabled) return;
-                       const value: string = event.target.value;
-                       
-                       if(value.length <= word.length){
-                           setWord(word.slice(0, -1));
-                           return;
-                       }
-                       
-                       const final: string = value.slice(-1);
-                       if(final === 'N') setWord(word + 'Ñ');
-                       else if(LETTERS.flat().includes(final.toUpperCase())) setWord(word + final.toUpperCase());
+                       setWord(event.target.value);
                    }}
                    onBlur={(event) => {
                        event.target.focus();
