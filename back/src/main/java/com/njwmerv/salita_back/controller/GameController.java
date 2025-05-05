@@ -34,15 +34,15 @@ public class GameController{
     }
 
     @GetMapping("/guess")
-    public WordDTO guessWord(@RequestParam String dayID, @RequestParam String word, @RequestParam(required = false) String playerID){
+    public WordDTO guessWord(@RequestParam String dayID, @RequestParam String word, @RequestParam int attempts, @RequestParam(required = false) String playerID){
         if(dayID == null || word == null) return null;
 
         final int intDayID = gameService.readDayIDParam(dayID);
         if(playerID == null){
-            return gameService.validateWord(intDayID, word);
+            return gameService.validateWord(intDayID, word, attempts);
         }
         else{
-            return gameService.validateWord(intDayID, word, playerID);
+            return gameService.validateWord(intDayID, word, attempts, playerID);
         }
     }
 }

@@ -66,26 +66,26 @@ public class GameService{
         }
     }
 
-    public WordDTO validateWord(int dayID, String guess){
+    public WordDTO validateWord(int dayID, String guess, int attempts){
         final Game game = gameRepository.findGameByID(dayID);
         if(game == null) return null;
         final int length = game.getLength();
         final String answer = game.getAnswer();
         List<CorrectnessState> correctness = checkWord(guess, answer, length);
-        return new WordDTO(guess, true, correctness);
+        return new WordDTO(guess, true, correctness, attempts >= 5 ? game.getAnswer() : null);
     }
 
-    public WordDTO validateWord(int dayID, String guess, String playerID){
+    public WordDTO validateWord(int dayID, String guess, int attempts, String playerID){
         GameState state = gameStateRepository.findGameStateByDayAndPlayerID(dayID, playerID);
         if(state == null){ // If can't find this game state, then just treat as if logged out
-            return validateWord(dayID, guess);
+            return validateWord(dayID, guess, attempts);
         }
         // Add guess to repo
         final List<CorrectnessState> correctness = checkWord(guess, state.getAnswer(), state.getLength());
         state.addGuess(new Word(guess, correctness));
         gameStateRepository.save(state);
 
-        return new WordDTO(guess, true, correctness);
+        return new WordDTO(guess, true, correctness, attempts >= 5 ? state.getAnswer() : null);
     }
 
     private List<CorrectnessState> checkWord(String guess, String answer, int length){

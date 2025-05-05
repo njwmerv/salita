@@ -18,5 +18,6 @@ export type GameDTO = {
 export type WordDTO = {
     word: string,
     valid: boolean,
+    answer: string,
     correctness: States[]
 }

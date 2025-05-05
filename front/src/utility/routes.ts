@@ -11,6 +11,7 @@ export const GAME_MAPPING: string = BACKEND_API_ROOT + '/game';
 export const DAY_ID_PARAM: string = 'dayID';
 export const PLAYER_ID_PARAM: string = 'playerID';
 export const WORD_PARAM: string = 'word';
+export const ATTEMPTS_PARAM: string = 'attempts';
 
 export const GAME_START_MAPPING: string = GAME_MAPPING + '/start';
 

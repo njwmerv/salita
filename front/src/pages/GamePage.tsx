@@ -9,7 +9,7 @@ import {LETTERS, MAX_GUESSES} from '../utility/constants.ts';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import {useNavigate, useParams} from 'react-router-dom';
 import {GameDTO, States, Word, WordDTO} from '../utility/types.ts';
-import {ARCHIVE_PAGE_ROUTE, GAME_START_MAPPING, DAY_ID_PARAM, GAME_GUESS_MAPPING, WORD_PARAM} from '../utility/routes.ts';
+import {ARCHIVE_PAGE_ROUTE, GAME_START_MAPPING, DAY_ID_PARAM, GAME_GUESS_MAPPING, WORD_PARAM, ATTEMPTS_PARAM} from '../utility/routes.ts';
 
 export default function GamePage(){
     // State Variables
@@ -39,7 +39,7 @@ export default function GamePage(){
     }
     
     async function sendGuess(): Promise<WordDTO> {
-        const url: string = GAME_GUESS_MAPPING + `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}`;
+        const url: string = GAME_GUESS_MAPPING + `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}&${ATTEMPTS_PARAM}=${guesses.length}`;
         const response: Response = await fetch(url, {
             method: "GET",
             headers: {
@@ -65,12 +65,13 @@ export default function GamePage(){
             error: "An error has occurred"
         }).then((response) => {
             if(response.valid){
-                setWord('');
                 const newGuesses: Word[] = [...guesses, response];
                 const willWin: boolean = didWin(response.correctness);
                 setWon(willWin);
                 setIsOpen(willWin || newGuesses.length >= MAX_GUESSES);
                 setGuesses(newGuesses);
+                if(response.answer) setWord(response.answer);
+                else if(!willWin) setWord('');
             }
             else{
                 toast.warn("This is not a valid word.");
@@ -124,6 +125,26 @@ export default function GamePage(){
         result += `${guesses.length}/${MAX_GUESSES} attempts!`;
         return result;
     }
+    
+    const WinModal = () => {
+        return (
+            <>
+                <h1 className="font-extrabold text-4xl">Congrats!</h1>
+                
+                <p>You got the word: {word} in {guesses.length} {guesses.length === 1 ? "try" : "tries"}! 🥳</p>
+            </>
+        );
+    };
+    
+    const LoseModal = () => {
+        return (
+            <>
+                <h1 className="font-extrabold text-4xl">Nice try!</h1>
+                
+                <p>Better luck next time! The word was {word}</p>
+            </>
+        );
+    };
     
     // Effects
     useEffect(() => {
@@ -195,10 +216,16 @@ export default function GamePage(){
             <Modal isOpen={isOpen}>
                 <div className="relative flex flex-col bg-white rounded-2xl w-md items-center p-4 gap-2">
                     {won ?
-                        <WinModal guesses={guesses} />
+                        <WinModal />
                         :
-                        <LoseModal guesses={guesses} />
+                        <LoseModal />
                     }
+                    
+                    <a href={`https://tagalog.pinoydictionary.com/word/${word.toLowerCase()}/`}
+                       target="_blank"
+                       className="underline hover:text-amber-300">
+                        Definition
+                    </a>
                     
                     <div>
                         {guesses.map((value: Word, index: number) => {
@@ -208,7 +235,10 @@ export default function GamePage(){
                     
                     
                     <button className="flex flex-row align-middle items-center w-fit h-12 p-2 gap-2 bg-amber-300 rounded-2xl hover:cursor-pointer"
-                            onClick={() => navigator.clipboard.writeText(guessesToString())}>
+                            onClick={() => {
+                                toast.success("Results copied successfully");
+                                navigator.clipboard.writeText(guessesToString())
+                            }}>
                         <p>Copy Result</p>
                         
                         <ContentCopyRoundedIcon />
@@ -223,27 +253,3 @@ export default function GamePage(){
         </div>
     );
 }
-
-interface ModalProps{
-    guesses: Word[]
-}
-
-const WinModal = ({guesses}: ModalProps) => {
-    return (
-        <>
-            <h1 className="font-extrabold text-4xl">Congrats!</h1>
-            
-            <p>You got the word: {guesses[guesses.length - 1]?.word} in {guesses.length} {guesses.length === 1 ? "try" : "tries"}! 🥳</p>
-        </>
-    );
-};
-
-const LoseModal = ({guesses}: ModalProps) => {
-    return (
-        <>
-            <h1 className="font-extrabold text-4xl">Nice try!</h1>
-            
-            <p>Better luck next time!</p>
-        </>
-    );
-};
