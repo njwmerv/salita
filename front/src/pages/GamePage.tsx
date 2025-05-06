@@ -39,7 +39,7 @@ export default function GamePage(){
     }
     
     async function sendGuess(): Promise<WordDTO> {
-        const url: string = GAME_GUESS_MAPPING + `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word}&${ATTEMPTS_PARAM}=${guesses.length}`;
+        const url: string = GAME_GUESS_MAPPING + `?${DAY_ID_PARAM}=${id}&${WORD_PARAM}=${word.toUpperCase()}&${ATTEMPTS_PARAM}=${guesses.length}`;
         const response: Response = await fetch(url, {
             method: "GET",
             headers: {
@@ -73,7 +73,7 @@ export default function GamePage(){
                 setIsOpen(willWin || newGuesses.length >= MAX_GUESSES);
                 setGuesses(newGuesses);
                 if(response.answer) setWord(response.answer);
-                else if(!willWin) setWord('');
+                else setWord('');
             }
             else{
                 toast.warn("This is not a valid word.");
@@ -133,7 +133,7 @@ export default function GamePage(){
             <>
                 <h1 className="font-extrabold text-4xl">Congrats!</h1>
                 
-                <p>You got the word: {word} in {guesses.length} {guesses.length === 1 ? "try" : "tries"}! 🥳</p>
+                <p>You got the word: {guesses.length > 0 && guesses[guesses.length - 1]?.word} in {guesses.length} {guesses.length === 1 ? "try" : "tries"}! 🥳</p>
             </>
         );
     };
